@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+    <script>
+        class JobSequencing {
+            constructor(job) {
+                this.job = job
+                this.timeslot = []
+                this.dmax = 0
+            }
+
+            orderJob() {
+                // Temporary variable
+                let temp
+
+                // Sort job profit desc
+                for(let i = 1;i < this.job.length; i++) {
+                    for(let j = 0;j < this.job.length - i; j++) {
+                        // Swap
+                        if(this.job[j].profit < this.job[j + 1].profit) {
+                            temp = this.job[j]
+                            this.job[j] = this.job[j + 1]
+                            this.job[j + 1] = temp
+                        }
+                    }
+                }
+            }
+
+            findDmax() {
+                let dmax = 0
+
+                for(let i = 0;i < this.job.length; i++) {
+                    dmax = this.job[i].deadline > dmax ? this.job[i].deadline : dmax
+                }
+
+                this.dmax = dmax
+            }
+
+            minValue(x, y) {
+                if(x < y) return x
+
+                return y
+            }
+
+            filledTimeSlot() {
+                let timeslot = []
+                let k = 0
+
+                for(let i = 0; i < this.job.length; i++) {
+                    k = this.minValue(this.dmax, this.job[i].deadline)
+                    while(k >= 1) {
+                        if(typeof timeslot[k - 1] === "undefined") {
+                            timeslot[k - 1] = i
+                            break
+                        }
+        
+                        k--
+                    }
+                }
+
+                this.timeslot = timeslot
+            }
+
+            requiredJob() {
+                let totalProfit = 0
+
+                for(let i = 0;i < this.dmax; i++) {
+                    if(this.timeslot[i] != -1) {
+                        console.log(this.job[this.timeslot[i]])
+                        totalProfit += this.job[this.timeslot[i]].profit
+                    }
+                }
+                
+                console.log(this.timeslot)
+
+                console.log('Total Profit: ' + totalProfit)
+            }
+
+            calculate() {
+                this.orderJob()
+                this.findDmax()
+                this.filledTimeSlot()
+                this.requiredJob()
+            }
+        }
+
+        let jobs = []
+
+        jobs[0] = {'name': 'j1', 'profit': 60, 'deadline': 2}
+        jobs[1] = {'name': 'j2', 'profit': 100, 'deadline': 1}
+        jobs[2] = {'name': 'j3', 'profit': 20, 'deadline': 3}
+        jobs[3] = {'name': 'j4', 'profit': 40, 'deadline': 2}
+        jobs[4] = {'name': 'j5', 'profit': 20, 'deadline': 1}
+
+        let job = new JobSequencing(jobs)
+        job.calculate()
+    </script>
+</body>
+</html>
