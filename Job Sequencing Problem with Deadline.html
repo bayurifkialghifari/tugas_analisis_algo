@@ -1,106 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- CSS Dependencies -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/shards-ui@latest/dist/css/shards.min.css">
+    <link rel="stylesheet" href="./modal.css">
 </head>
+
 <body>
-    
+    <!-- Page Content -->
+    <div class="page-content">
+
+        <!-- Header -->
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+            <a class="navbar-brand" href="#">Job Sequencing</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown-6"
+                aria-controls="navbarNavDropdown-6" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse mr-auto" id="navbarNavDropdown-6">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link" href="">
+                            Home
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+
+        <!-- Content -->
+        <div class="content clearfix">
+            <div class="container mb-5">
+                <div class="section-title col-lg-8 col-md-10 ml-auto mr-auto text-center">
+                    <h3 class="mb-4 text-uppercase">List Job</h3>
+                </div>
+
+                <div class="example col-md-10 ml-auto mr-auto">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="text-right mb-3">
+                                <button class="btn btn-danger" id="reset-job">Reset Job</button>
+                                <button class="btn btn-success" id="add-new-job">Add New Job</button>
+                            </div>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>No</th>
+                                        <th>Name</th>
+                                        <th>Profit</th>
+                                        <th>Deadline</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="render-data">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer py-5">
+            <p class="text-muted text-center small p-0 mb-4">&copy; Kelompok 5</p>
+        </footer>
+    </div>
+
+    <!-- Modal add  -->
+    <div id="modal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="text-right">
+                <span class="close">&times;</span>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="text-center">
+                        <h3 id="modal-title">New Job</h3>
+                    </div>
+                </div>
+                <form id="form-add-job" class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Name</label>
+                                <input type="text" class="form-control"
+                                    placeholder="Job name"
+                                    id="job-name"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Profit</label>
+                                <input type="number" class="form-control"
+                                    placeholder="Job Profit"
+                                    id="job-profit"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label>Deadline</label>
+                                <input type="number" class="form-control"
+                                    placeholder="Job Deadline"
+                                    id="job-deadline"
+                                    required
+                                />
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="text-right">
+                                <button type="button" class="btn btn-danger cancel">Cancel</button>
+                                <button type="submit" class="btn btn-success">Submit</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="./job-squenching.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11.7.0/dist/sweetalert2.all.min.js"></script>
     <script>
-        class JobSequencing {
-            constructor(job) {
-                this.job = job
-                this.timeslot = []
-                this.dmax = 0
-            }
+        // $
+        const $ = (selector) => document.querySelector(selector)
 
-            orderJob() {
-                // Temporary variable
-                let temp
-
-                // Sort job profit desc
-                for(let i = 1;i < this.job.length; i++) {
-                    for(let j = 0;j < this.job.length - i; j++) {
-                        // Swap
-                        if(this.job[j].profit < this.job[j + 1].profit) {
-                            temp = this.job[j]
-                            this.job[j] = this.job[j + 1]
-                            this.job[j + 1] = temp
-                        }
-                    }
-                }
-            }
-
-            findDmax() {
-                let dmax = 0
-
-                for(let i = 0;i < this.job.length; i++) {
-                    dmax = this.job[i].deadline > dmax ? this.job[i].deadline : dmax
-                }
-
-                this.dmax = dmax
-            }
-
-            minValue(x, y) {
-                if(x < y) return x
-
-                return y
-            }
-
-            filledTimeSlot() {
-                let timeslot = []
-                let k = 0
-
-                for(let i = 0; i < this.job.length; i++) {
-                    k = this.minValue(this.dmax, this.job[i].deadline)
-                    while(k >= 1) {
-                        if(typeof timeslot[k - 1] === "undefined") {
-                            timeslot[k - 1] = i
-                            break
-                        }
-        
-                        k--
-                    }
-                }
-
-                this.timeslot = timeslot
-            }
-
-            requiredJob() {
-                let totalProfit = 0
-
-                for(let i = 0;i < this.dmax; i++) {
-                    if(this.timeslot[i] != -1) {
-                        console.log(this.job[this.timeslot[i]])
-                        totalProfit += this.job[this.timeslot[i]].profit
-                    }
-                }
-                
-                console.log(this.timeslot)
-
-                console.log('Total Profit: ' + totalProfit)
-            }
-
-            calculate() {
-                this.orderJob()
-                this.findDmax()
-                this.filledTimeSlot()
-                this.requiredJob()
-            }
-        }
+        // Update or Create
+        let isUpdate = false
 
         let jobs = []
+        let job_id = 0
 
-        jobs[0] = {'name': 'j1', 'profit': 60, 'deadline': 2}
-        jobs[1] = {'name': 'j2', 'profit': 100, 'deadline': 1}
-        jobs[2] = {'name': 'j3', 'profit': 20, 'deadline': 3}
-        jobs[3] = {'name': 'j4', 'profit': 40, 'deadline': 2}
-        jobs[4] = {'name': 'j5', 'profit': 20, 'deadline': 1}
+        // Print job
+        function printJob(jobs) {
+            let html = ''
 
-        let job = new JobSequencing(jobs)
-        job.calculate()
+            // If jobs not empty
+            if (jobs.length > 0) {
+                jobs.forEach((job, index) => {
+                    html += `
+                        <tr>
+                            <td>${index + 1}</td>
+                            <td>${job.name}</td>
+                            <td>${job.profit}</td>
+                            <td>${job.deadline}</td>
+                            <td>
+                                <button class="btn btn-danger btn-sm" onclick="deleteJob(${index})">Delete</button>
+                                <button class="btn btn-primary btn-sm" onclick="updateJob(${index})">Update</button>
+                            </td>
+                        </tr>
+                    `
+                })
+            } else {
+                html = '<tr><td colspan="5" class="text-center">No Data</td></tr>'
+            }
+
+            // Render data
+            $('#render-data').innerHTML = html
+        }
+
+        // Delete Job
+        function deleteJob(id) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: "You won't be able to revert this!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, delete it!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    jobs.splice(id, 1)
+                    Swal.fire(
+                        'Deleted!',
+                        'Your file has been deleted.',
+                        'success'
+                    )
+                    printJob(jobs)
+                }
+            })
+        }
+
+        // Update Job
+        function updateJob(id) {
+            job_id = id
+            isUpdate = true
+            $('#modal').style.display = 'block'
+            $('#modal-title').innerHTML = 'Update Job'
+
+            $('#job-name').value = jobs[id].name
+            $('#job-profit').value = jobs[id].profit
+            $('#job-deadline').value = jobs[id].deadline
+        }
+
+        // Reset input
+        function resetInput() {
+            $('#job-name').value = ''
+            $('#job-profit').value = ''
+            $('#job-deadline').value = ''
+        }
+
+        // Dom On load
+        window.addEventListener('DOMContentLoaded', () => {
+            // Toast notification
+            const Toast = Swal.mixin({
+                toast: true,
+                position: 'top-end',
+                showConfirmButton: false,
+                timer: 3000,
+                timerProgressBar: true,
+                didOpen: (toast) => {
+                    toast.addEventListener('mouseenter', Swal.stopTimer)
+                    toast.addEventListener('mouseleave', Swal.resumeTimer)
+                }
+            })
+
+            // Reset Job
+            $('#reset-job').addEventListener('click', () => {
+                jobs = []
+
+                printJob(jobs)
+            })
+
+            // Open modal add job
+            $('#add-new-job').addEventListener('click', () => {
+                isUpdate = false
+                $('#modal').style.display = 'block'
+                $('#modal-title').innerHTML = 'New Job'
+            })
+
+            // Close modal
+            function closeModal() {
+                $('#modal').style.display = 'none'
+            }
+
+            window.addEventListener('click', ev => {
+                if (ev.target == $('#modal')) {
+                    closeModal()
+                }
+            })
+            $('.close').addEventListener('click', () => closeModal())
+            $('.cancel').addEventListener('click', () => closeModal())
+
+            // Add new job
+            $('#form-add-job').addEventListener('submit', ev => {
+                ev.preventDefault()
+
+                const name = $('#job-name').value
+                const profit = $('#job-profit').value
+                const deadline = $('#job-deadline').value
+
+                if(isUpdate) {
+                    jobs[job_id] = {
+                        name: name,
+                        profit: profit,
+                        deadline: deadline,
+                    }
+                } else {
+                    jobs[jobs.length] = {
+                        name: name,
+                        profit: profit,
+                        deadline: deadline,
+                    }
+                }
+
+                printJob(jobs)
+                closeModal()
+                resetInput()
+                Toast.fire({
+                    icon: 'success',
+                    title: 'Job Created'
+                })
+            })
+              
+
+            // Print job
+            printJob(jobs)
+        })
     </script>
 </body>
+
 </html>
