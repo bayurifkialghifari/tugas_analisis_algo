@@ -6,20 +6,8 @@ class JobSequencing {
     }
 
     orderJob() {
-        // Temporary variable
-        let temp
-
         // Sort job profit desc
-        for (let i = 1; i < this.job.length; i++) {
-            for (let j = 0; j < this.job.length - i; j++) {
-                // Swap
-                if (this.job[j].profit < this.job[j + 1].profit) {
-                    temp = this.job[j]
-                    this.job[j] = this.job[j + 1]
-                    this.job[j + 1] = temp
-                }
-            }
-        }
+        this.job.sort((a, b) => a.profit < b.profit ? 1 : -1)
 
         return this.job
     }
@@ -57,7 +45,6 @@ class JobSequencing {
                 k--
             }
         }
-
         this.timeslot = timeslot
 
         return this.timeslot
@@ -67,7 +54,7 @@ class JobSequencing {
         let totalProfit = 0
 
         for (let i = 0; i < this.dmax; i++) {
-            if (typeof this.timeslot[i]  === "undefined") {
+            if (typeof this.timeslot[i] !== "undefined") {
                 totalProfit += this.job[this.timeslot[i]].profit
             }
         }
@@ -79,12 +66,6 @@ class JobSequencing {
         this.orderJob()
         this.findDmax()
         this.filledTimeSlot()
-
-        return {
-            job: this.job,
-            dmax: this.dmax,
-            timeslot: this.timeslot,
-            totalProfit: this.requiredJob(),
-        }
+        this.requiredJob()
     }
 }

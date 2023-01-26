@@ -48,6 +48,10 @@
                             <div class="text-right mb-3">
                                 <button class="btn btn-danger" id="reset-job">Reset Job</button>
                                 <button class="btn btn-success" id="add-new-job">Add New Job</button>
+                                <div id="btn-calculate">
+                                    <br>
+                                    <button class="btn btn-success" onclick="calculate()">Scheduling Job</button>
+                                </div>
                             </div>
                             <table class="table table-striped table-bordered">
                                 <thead>
@@ -62,6 +66,7 @@
                                 <tbody id="render-data">
                                 </tbody>
                             </table>
+                            <div class="text-left" id="calculate-data"></div>
                         </div>
                     </div>
                 </div>
@@ -141,6 +146,9 @@
         let isUpdate = false
 
         let jobs = []
+        let dmax = 0
+        let timeslot = []
+        let totalProfit = 0
         let job_id = 0
 
         // Print job
@@ -163,8 +171,13 @@
                         </tr>
                     `
                 })
+
+                $('#btn-calculate').style.display = 'block'
+
             } else {
                 html = '<tr><td colspan="5" class="text-center">No Data</td></tr>'
+                
+                $('#btn-calculate').style.display = 'none'
             }
 
             // Render data
@@ -211,6 +224,39 @@
             $('#job-name').value = ''
             $('#job-profit').value = ''
             $('#job-deadline').value = ''
+        }
+
+        // Calculate Job
+        function calculate() {
+            let job = new JobSequencing(jobs)
+            jobs = job.orderJob()
+            dmax = job.findDmax()
+            timeslot = job.filledTimeSlot()
+            totalProfit = job.requiredJob()
+
+            $('#calculate-data').innerHTML = `
+                <p>Dmax : ${dmax}</p>
+                <p> maximum profit sequence of jobs </p>
+                <p>Total Profit : ${totalProfit}</p>
+                <table class="table table-striped">
+                    <tr>
+                        <th>Job</th>
+                        <th>Deadline</th>
+                        <th>Profit</th>
+                    </tr>
+                    ${timeslot.map((r, index) => {
+                        return `
+                            <tr>
+                                <td>${jobs[r].name}</td>
+                                <td>${jobs[r].deadline}</td>
+                                <td>${jobs[r].profit}</td>
+                            </tr>
+                        `
+                    }).join('')}
+                </table>   
+            `
+
+            printJob(jobs)
         }
 
         // Dom On load
@@ -266,14 +312,14 @@
                 if(isUpdate) {
                     jobs[job_id] = {
                         name: name,
-                        profit: profit,
-                        deadline: deadline,
+                        profit: Number(profit),
+                        deadline: Number(deadline),
                     }
                 } else {
                     jobs[jobs.length] = {
                         name: name,
-                        profit: profit,
-                        deadline: deadline,
+                        profit: Number(profit),
+                        deadline: Number(deadline),
                     }
                 }
 
